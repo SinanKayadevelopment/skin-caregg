@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   title: 'DermaDupe Atelier | Luxury Skincare Dupes & Smart Beauty Guide',
   description: 'Discover verified affordable drugstore twins for luxury skincare favorites like Estée Lauder, La Mer, and SkinCeuticals. Save up to 85% on identical restorative formulas.',
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://skin-caregg.vercel.app'),
-  verification: gscVerification ? { google: gscVerification } : undefined,
+  verification: { google: 'google53f7bee5ca9afc78' },
   robots: {
     index: true,
     follow: true,

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 
@@ -46,6 +47,11 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans bg-[#FAF6F5] text-[#2C1F25] selection:bg-rose-200 selection:text-rose-950 dark:bg-[#150E13] dark:text-[#F8F1F3]">
         {children}
+        <Script
+          id="skimlinks-script"
+          strategy="afterInteractive"
+          src="https://s.skimresources.com/js/311002X1799493.skimlinks.js"
+        />
       </body>
     </html>
   );

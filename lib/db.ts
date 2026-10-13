@@ -4,13 +4,33 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
-  });
+export function getPrismaClient(): PrismaClient | null {
+  if (typeof window !== 'undefined') return null;
+  if (!process.env.DATABASE_URL) return null;
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+  try {
+    if (!globalForPrisma.prisma) {
+      globalForPrisma.prisma = new PrismaClient({
+        log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+      });
+    }
+    return globalForPrisma.prisma;
+  } catch (err) {
+    console.warn('[PrismaClient Warning]: Unable to initialize Prisma Client:', err);
+    return null;
+  }
+}
+
+// Resilient proxy so code referencing `prisma.*` does not throw during build or when database is offline
+export const prisma = new Proxy({} as PrismaClient, {
+  get(_target, prop) {
+    const client = getPrismaClient();
+    if (!client) {
+      return () => Promise.resolve(null);
+    }
+    return (client as any)[prop];
+  },
+});
 
 export interface LogClickParams {
   productId: string;
@@ -27,9 +47,10 @@ export async function recordClickLog(params: LogClickParams): Promise<void> {
   const timestamp = new Date();
 
   // If DATABASE_URL is configured, persist to database
-  if (process.env.DATABASE_URL) {
+  const client = getPrismaClient();
+  if (client) {
     try {
-      await prisma.clickLog.create({
+      await client.clickLog.create({
         data: {
           productId: params.productId,
           targetUrl: params.targetUrl,

@@ -3,6 +3,8 @@ import { getProductById } from '@/lib/data';
 import { buildMonetizedUrl } from '@/lib/affiliate-config';
 import { recordClickLog } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * Cloaked Affiliate Redirection Layer & Monetization Engine
  * - Appends affiliate tracking IDs based on merchant (Amazon, Sephora, Target, Skimlinks)

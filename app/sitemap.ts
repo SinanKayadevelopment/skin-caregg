@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { getAllProducts, getPopularComparePairs, getAllConflictRoutes } from '@/lib/data';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dermadupe.com';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://skin-caregg.vercel.app';
   const lastModified = new Date();
 
   const staticRoutes: MetadataRoute.Sitemap = [

@@ -1,0 +1,114 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum IngredientCategory {
+  ACTIVE
+  EMOLLIENT
+  HUMECTANT
+  PRESERVATIVE
+  SOLVENT
+  SURFACTANT
+  OTHER
+}
+
+enum ConflictSeverity {
+  WARNING
+  DANGER
+  SYNERGY
+}
+
+model Ingredient {
+  id          String             @id @default(uuid())
+  name        String
+  inciName    String
+  category    IngredientCategory @default(OTHER)
+  description String
+
+  productIngredients ProductIngredient[]
+  conflictsAsA       IngredientConflict[] @relation("IngredientA")
+  conflictsAsB       IngredientConflict[] @relation("IngredientB")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+  @@index([inciName])
+}
+
+model Product {
+  id             String  @id @default(uuid())
+  slug           String  @unique
+  brand          String
+  name           String
+  price          Float
+  currency       String  @default("USD")
+  imageUrl       String
+  affiliateUrl   String
+  isLuxuryTarget Boolean @default(false)
+  ingredientsRaw String
+
+  productIngredients ProductIngredient[]
+  clickLogs          ClickLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([brand])
+  @@index([isLuxuryTarget])
+}
+
+model ProductIngredient {
+  id                 String  @id @default(uuid())
+  productId          String
+  ingredientId       String
+  rankOrder          Int
+  isActiveIngredient Boolean @default(false)
+
+  product    Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, ingredientId])
+  @@index([productId])
+  @@index([ingredientId])
+  @@index([rankOrder])
+}
+
+model IngredientConflict {
+  id            String           @id @default(uuid())
+  ingredientAId String
+  ingredientBId String
+  severity      ConflictSeverity
+  explanation   String
+
+  ingredientA Ingredient @relation("IngredientA", fields: [ingredientAId], references: [id], onDelete: Cascade)
+  ingredientB Ingredient @relation("IngredientB", fields: [ingredientBId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([ingredientAId, ingredientBId])
+  @@index([ingredientAId])
+  @@index([ingredientBId])
+}
+
+model ClickLog {
+  id        String   @id @default(uuid())
+  productId String
+  targetUrl String
+  referrer  String?
+  userAgent String?
+  timestamp DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([timestamp])
+}
+

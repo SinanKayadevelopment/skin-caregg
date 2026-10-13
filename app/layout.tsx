@@ -18,8 +18,8 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 const gscVerification = process.env.NEXT_PUBLIC_GSC_VERIFICATION;
 
 export const metadata: Metadata = {
-  title: 'DermaDupe Lab | Skincare Dupe & Ingredient Match Engine',
-  description: 'Find verified chemical dupes for luxury skincare products with weighted INCI cosmetic matching.',
+  title: 'DermaDupe Atelier | Luxury Skincare Dupes & Smart Beauty Guide',
+  description: 'Discover verified affordable drugstore twins for luxury skincare favorites like Estée Lauder, La Mer, and SkinCeuticals. Save up to 85% on identical restorative formulas.',
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://dermadupe.com'),
   verification: gscVerification ? { google: gscVerification } : undefined,
   robots: {
